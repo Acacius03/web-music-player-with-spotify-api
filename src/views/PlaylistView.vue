@@ -14,9 +14,8 @@ watch(currentPlaylist, async () => {
     }
   })
   const data = await response.json()
-  console.log(data.items)
   tracks.value = data.items.map((item: any) => ({
-    added_at: item.added_at,
+    // added_at: item.added_at,
     ...item.track
   }))
 })
@@ -28,11 +27,10 @@ const formatTime = (ms: number): string => {
 
   const formattedTime = `${minute}:${seconds < 10 ? `0${seconds}` : seconds}`
   return formattedTime
-  //   return seconds
 }
 </script>
 <template>
-  <div v-if="currentPlaylist">
+  <div id="playlist" v-if="currentPlaylist">
     <div class="playlist-info-wrapper">
       <div class="playlist-info">
         <img
@@ -48,32 +46,37 @@ const formatTime = (ms: number): string => {
         </div>
       </div>
     </div>
-    <div v-if="tracks">
-      <ul>
-        <li v-for="track in tracks" :key="track.id">
-          <img :src="track.album.images[2].url" alt="" />
-          <div>
-            <p>{{ track.name }}</p>
-            <p>{{ track.artists[0].name }}</p>
+    <table v-if="tracks">
+      <tr>
+        <th>#</th>
+        <th>Title</th>
+        <th>Album</th>
+        <th>Duration</th>
+      </tr>
+      <tr v-for="(track, id) in tracks" :key="track.id">
+        <td>{{ id + 1 }}</td>
+        <td>
+          <div class="title-cell">
+            <img
+              :src="track.album.images[2].url"
+              :alt="track.album.name + ' album cover photo'"
+              :width="track.album.images[2].width"
+              :height="track.album.images[2].height"
+            />
+            <div>
+              <h4>{{ track.name }}</h4>
+              <small>{{ track.artists[0].name }}</small>
+            </div>
           </div>
-          <div>
-            {{ track.album.name }}
-          </div>
-          <div>
-            {{ track.added_at }}
-          </div>
-          <div>
-            {{ formatTime(track.duration_ms) }}
-          </div>
-        </li>
-      </ul>
-    </div>
+        </td>
+        <td>{{ track.album.name }}</td>
+        <td>{{ formatTime(track.duration_ms) }}</td>
+      </tr>
+    </table>
   </div>
 </template>
 <style scoped>
 .playlist-info-wrapper {
-  margin: -0.5rem;
-  margin-bottom: 0;
   background-image: linear-gradient(to bottom, rgba(128, 128, 128, 0.8), rgba(128, 128, 128, 0.4));
 }
 .playlist-info {
@@ -81,5 +84,43 @@ const formatTime = (ms: number): string => {
   align-items: end;
   gap: 1.5rem;
   padding: 1.5rem;
+}
+table {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 0.5rem;
+}
+tr:hover td {
+  background-color: rgba(128, 128, 128, 0.3);
+  outline: 1px solid rgba(128, 128, 128, 0.3);
+}
+tr:not(:first-child) {
+  height: 56px;
+}
+tr > *:first-child {
+  border-radius: 0.125rem 0 0 0.125rem;
+  text-align: center;
+  width: 48px;
+}
+tr > *:last-child {
+  padding-right: 0.75rem;
+  border-radius: 0 0.125rem 0.125rem 0;
+  text-align: right;
+}
+th {
+  text-align: left;
+}
+.title-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.title-cell img {
+  width: 40px;
+  height: 40px;
+  border-radius: 0.125rem;
+}
+.title-cell div small {
+  color: rgba(160, 160, 160, 1);
+  font-weight: 600;
 }
 </style>

@@ -64,8 +64,12 @@ aside > *:last-child {
 }
 main {
   flex: 1 1 0;
+  max-height: 100%;
+  overflow: hidden;
 }
 main > * {
   height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 </style>
